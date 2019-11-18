@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreTelephony
+import Foundation
 
 struct Device {
 
@@ -39,5 +41,9 @@ struct Device {
         case .unknown, .simulator:                                              return 0
         }
     }
-
+    
+    /// mobileCountryCode: eg 206
+    static var mobileCountryCode: String? {
+        return CTTelephonyNetworkInfo().subscriberCellularProvider?.mobileCountryCode
+    }
 }

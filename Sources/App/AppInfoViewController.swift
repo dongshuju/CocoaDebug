@@ -27,6 +27,7 @@ class AppInfoViewController: UITableViewController {
     @IBOutlet weak var networkSwitch: UISwitch!
     @IBOutlet weak var htmlSwitch: UISwitch!
     
+    @IBOutlet weak var mcc: UILabel!
     
     //MARK: - init
     override func viewDidLoad() {
@@ -41,6 +42,7 @@ class AppInfoViewController: UITableViewController {
         labelScreenResolution.text = Device.screenResolution
         labelScreenSize.text = "\(Device.screenSize)"
         labelDeviceModel.text = "\(Device.deviceModel)"
+        mcc.text = "\(Device.mobileCountryCode ?? "--")"
         
         labelBundleID.text = Bundle.main.bundleIdentifier
         labelignoredURLs.text = String(CocoaDebugSettings.shared.ignoredURLs?.count ?? 0)

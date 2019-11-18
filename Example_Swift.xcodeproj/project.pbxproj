@@ -2559,7 +2559,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AFDCFELHFW;
+				DEVELOPMENT_TEAM = V332RPGP8U;
 				FRAMEWORK_SEARCH_PATHS = (
 					"${SDK_DIR}/usr/include/libxml2",
 					"$(PROJECT_DIR)",
@@ -2570,7 +2570,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-lxml2";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Example.Swift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Example.Swift.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Example_Swift/Example_Swift-Bridging-Header.h";
@@ -2587,7 +2587,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AFDCFELHFW;
+				DEVELOPMENT_TEAM = V332RPGP8U;
 				FRAMEWORK_SEARCH_PATHS = (
 					"${SDK_DIR}/usr/include/libxml2",
 					"$(PROJECT_DIR)",
@@ -2598,7 +2598,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-lxml2";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Example.Swift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Example.Swift.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Example_Swift/Example_Swift-Bridging-Header.h";
