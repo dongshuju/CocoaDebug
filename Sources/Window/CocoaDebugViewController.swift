@@ -46,6 +46,7 @@ extension CocoaDebugViewController: BubbleDelegate {
     
     func didTapBubble() {
         _WindowHelper.shared.displayedList = true
+        _WindowHelper.shared.updateAppKeyWindow()
         let storyboard = UIStoryboard(name: "Manager", bundle: Bundle(for: CocoaDebug.self))
         guard let vc = storyboard.instantiateInitialViewController() else {return}
         if #available(iOS 13, *) {vc.modalPresentationStyle = .fullScreen}

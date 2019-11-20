@@ -31,5 +31,6 @@ class CocoaDebugNavigationController: UINavigationController {
     
     @objc func exit() {
         dismiss(animated: true, completion: nil)
+        _WindowHelper.shared.sendBackKeyWindow()
     }
 }

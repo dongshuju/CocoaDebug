@@ -13,16 +13,18 @@ public class _WindowHelper: NSObject {
     
     var window: CocoaDebugWindow?
     var displayedList = false
-    lazy var vc = CocoaDebugViewController()
+    weak var appMainWindow: UIWindow?
+    var vc = CocoaDebugViewController()
     
     private override init() {
-        self.window = CocoaDebugWindow(frame: UIScreen.main.bounds)
-        // This is for making the window not to effect the StatusBarStyle
-        self.window?.bounds.size.height = UIScreen.main.bounds.height.nextDown
         super.init()
     }
 
     public func enable() {
+        self.updateAppKeyWindow()
+        self.window = CocoaDebugWindow(frame: UIScreen.main.bounds)
+        // This is for making the window not to effect the StatusBarStyle
+        self.window?.bounds.size.height = UIScreen.main.bounds.height.nextDown
         if self.window?.rootViewController != self.vc {
             self.window?.rootViewController = self.vc
             self.window?.delegate = self
@@ -34,13 +36,21 @@ public class _WindowHelper: NSObject {
     }
 
     public func disable() {
-        if self.window?.rootViewController != nil {
-            self.window?.rootViewController = nil
-            self.window?.delegate = nil
-            self.window?.isHidden = true
-            _WHDebugFPSMonitor.sharedInstance()?.stopMonitoring()
-            _WHDebugMemoryMonitor.sharedInstance()?.stopMonitoring()
-            _WHDebugCpuMonitor.sharedInstance()?.stopMonitoring()
-        }
+        self.sendBackKeyWindow()
+        self.window?.rootViewController = nil
+        self.window?.delegate = nil
+        self.window?.isHidden = true
+        self.window = nil
+        _WHDebugFPSMonitor.sharedInstance()?.stopMonitoring()
+        _WHDebugMemoryMonitor.sharedInstance()?.stopMonitoring()
+        _WHDebugCpuMonitor.sharedInstance()?.stopMonitoring()
+    }
+    
+    public func updateAppKeyWindow() {
+        self.appMainWindow = UIApplication.shared.keyWindow
+    }
+    
+    public func sendBackKeyWindow() {
+        self.appMainWindow?.makeKeyAndVisible()
     }
 }
