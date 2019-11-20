@@ -21,6 +21,9 @@ public class _WindowHelper: NSObject {
     }
 
     public func enable() {
+        if self.window != nil {
+            return
+        }
         self.updateAppKeyWindow()
         self.window = CocoaDebugWindow(frame: UIScreen.main.bounds)
         // This is for making the window not to effect the StatusBarStyle
