@@ -232,7 +232,6 @@
 		3879B22B232108F500D36437 /* _MLBFilePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B12F232108F500D36437 /* _MLBFilePreviewController.m */; };
 		3879B22C232108F500D36437 /* _MLBImageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B130232108F500D36437 /* _MLBImageResources.m */; };
 		3879B22D232108F500D36437 /* _MLBFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B132232108F500D36437 /* _MLBFileInfo.m */; };
-		3879B22E232108F500D36437 /* _UIWebView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B134232108F500D36437 /* _UIWebView+Swizzling.m */; };
 		3879B22F232108F500D36437 /* _Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B135232108F500D36437 /* _Swizzling.m */; };
 		3879B230232108F500D36437 /* _NSObject+UIDebuggingInformationOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B136232108F500D36437 /* _NSObject+UIDebuggingInformationOverlay.m */; };
 		3879B231232108F500D36437 /* _WKWebView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 3879B137232108F500D36437 /* _WKWebView+Swizzling.m */; };
@@ -537,7 +536,6 @@
 		3879B130232108F500D36437 /* _MLBImageResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MLBImageResources.m; sourceTree = "<group>"; };
 		3879B131232108F500D36437 /* _MLBDirectoryContentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _MLBDirectoryContentsTableViewController.h; sourceTree = "<group>"; };
 		3879B132232108F500D36437 /* _MLBFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MLBFileInfo.m; sourceTree = "<group>"; };
-		3879B134232108F500D36437 /* _UIWebView+Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "_UIWebView+Swizzling.m"; sourceTree = "<group>"; };
 		3879B135232108F500D36437 /* _Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _Swizzling.m; sourceTree = "<group>"; };
 		3879B136232108F500D36437 /* _NSObject+UIDebuggingInformationOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "_NSObject+UIDebuggingInformationOverlay.m"; sourceTree = "<group>"; };
 		3879B137232108F500D36437 /* _WKWebView+Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "_WKWebView+Swizzling.m"; sourceTree = "<group>"; };
@@ -949,7 +947,6 @@
 		3879B133232108F500D36437 /* Swizzling */ = {
 			isa = PBXGroup;
 			children = (
-				3879B134232108F500D36437 /* _UIWebView+Swizzling.m */,
 				3879B135232108F500D36437 /* _Swizzling.m */,
 				3879B136232108F500D36437 /* _NSObject+UIDebuggingInformationOverlay.m */,
 				3879B137232108F500D36437 /* _WKWebView+Swizzling.m */,
@@ -1390,7 +1387,6 @@
 				EA165F0F204D2539001472C1 /* main.m in Sources */,
 				3879B231232108F500D36437 /* _WKWebView+Swizzling.m in Sources */,
 				3879B228232108F500D36437 /* _MLBDirectoryContentsTableViewController.m in Sources */,
-				3879B22E232108F500D36437 /* _UIWebView+Swizzling.m in Sources */,
 				3879B236232108F500D36437 /* CocoaDebugTabBarController.swift in Sources */,
 				EAF58059204E7434001CA56D /* AFURLRequestSerialization.m in Sources */,
 				3879B232232108F500D36437 /* Bubble.swift in Sources */,

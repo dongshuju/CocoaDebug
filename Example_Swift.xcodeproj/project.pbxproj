@@ -236,7 +236,6 @@
 		387FB667230EA02000DB7985 /* _MLBFilePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB56B230EA02000DB7985 /* _MLBFilePreviewController.m */; };
 		387FB668230EA02000DB7985 /* _MLBImageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB56C230EA02000DB7985 /* _MLBImageResources.m */; };
 		387FB669230EA02000DB7985 /* _MLBFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB56E230EA02000DB7985 /* _MLBFileInfo.m */; };
-		387FB66A230EA02000DB7985 /* _UIWebView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB570230EA02000DB7985 /* _UIWebView+Swizzling.m */; };
 		387FB66B230EA02000DB7985 /* _Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB571230EA02000DB7985 /* _Swizzling.m */; };
 		387FB66C230EA02000DB7985 /* _NSObject+UIDebuggingInformationOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB572230EA02000DB7985 /* _NSObject+UIDebuggingInformationOverlay.m */; };
 		387FB66D230EA02000DB7985 /* _WKWebView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB573230EA02000DB7985 /* _WKWebView+Swizzling.m */; };
@@ -275,7 +274,6 @@
 		387FB68E230EA03500DB7985 /* _MLBFilePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB56B230EA02000DB7985 /* _MLBFilePreviewController.m */; };
 		387FB68F230EA03500DB7985 /* _MLBImageResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB56C230EA02000DB7985 /* _MLBImageResources.m */; };
 		387FB690230EA03500DB7985 /* _MLBFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB56E230EA02000DB7985 /* _MLBFileInfo.m */; };
-		387FB691230EA03500DB7985 /* _UIWebView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB570230EA02000DB7985 /* _UIWebView+Swizzling.m */; };
 		387FB692230EA03500DB7985 /* _Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB571230EA02000DB7985 /* _Swizzling.m */; };
 		387FB693230EA03500DB7985 /* _NSObject+UIDebuggingInformationOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB572230EA02000DB7985 /* _NSObject+UIDebuggingInformationOverlay.m */; };
 		387FB694230EA03500DB7985 /* _WKWebView+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 387FB573230EA02000DB7985 /* _WKWebView+Swizzling.m */; };
@@ -873,7 +871,6 @@
 		387FB56C230EA02000DB7985 /* _MLBImageResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MLBImageResources.m; sourceTree = "<group>"; };
 		387FB56D230EA02000DB7985 /* _MLBDirectoryContentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _MLBDirectoryContentsTableViewController.h; sourceTree = "<group>"; };
 		387FB56E230EA02000DB7985 /* _MLBFileInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MLBFileInfo.m; sourceTree = "<group>"; };
-		387FB570230EA02000DB7985 /* _UIWebView+Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "_UIWebView+Swizzling.m"; sourceTree = "<group>"; };
 		387FB571230EA02000DB7985 /* _Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _Swizzling.m; sourceTree = "<group>"; };
 		387FB572230EA02000DB7985 /* _NSObject+UIDebuggingInformationOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "_NSObject+UIDebuggingInformationOverlay.m"; sourceTree = "<group>"; };
 		387FB573230EA02000DB7985 /* _WKWebView+Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "_WKWebView+Swizzling.m"; sourceTree = "<group>"; };
@@ -1374,7 +1371,6 @@
 		387FB56F230EA02000DB7985 /* Swizzling */ = {
 			isa = PBXGroup;
 			children = (
-				387FB570230EA02000DB7985 /* _UIWebView+Swizzling.m */,
 				387FB571230EA02000DB7985 /* _Swizzling.m */,
 				387FB572230EA02000DB7985 /* _NSObject+UIDebuggingInformationOverlay.m */,
 				387FB573230EA02000DB7985 /* _WKWebView+Swizzling.m */,
@@ -2224,7 +2220,6 @@
 				387FB65A230EA02000DB7985 /* _OCLogStoreManager.m in Sources */,
 				EAF58043204E73C3001CA56D /* ASIInputStream.m in Sources */,
 				EAF5800C204E73C3001CA56D /* Timeline.swift in Sources */,
-				387FB66A230EA02000DB7985 /* _UIWebView+Swizzling.m in Sources */,
 				EAF58009204E73C3001CA56D /* TaskDelegate.swift in Sources */,
 				EAF5801F204E73C3001CA56D /* Networking.swift in Sources */,
 				EAF58046204E73C3001CA56D /* ASIWebPageRequest.m in Sources */,
@@ -2396,7 +2391,6 @@
 				387FB68E230EA03500DB7985 /* _MLBFilePreviewController.m in Sources */,
 				387FB68F230EA03500DB7985 /* _MLBImageResources.m in Sources */,
 				387FB690230EA03500DB7985 /* _MLBFileInfo.m in Sources */,
-				387FB691230EA03500DB7985 /* _UIWebView+Swizzling.m in Sources */,
 				387FB692230EA03500DB7985 /* _Swizzling.m in Sources */,
 				387FB693230EA03500DB7985 /* _NSObject+UIDebuggingInformationOverlay.m in Sources */,
 				387FB694230EA03500DB7985 /* _WKWebView+Swizzling.m in Sources */,
