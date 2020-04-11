@@ -29,8 +29,6 @@
     
     [self testHTTP];
     [self test_console_WKWebView];
-    [self test_console_UIWebView];
-    
     
     //TCP
     [_TCPLogger logWithString:@"tcp messages...."];
@@ -117,12 +115,6 @@
     WKWebView *webView = [WKWebView new];
     [self.view addSubview:webView];
     [webView loadHTMLString:[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil] baseURL:[[NSBundle mainBundle] bundleURL]];
-}
-
-- (void)test_console_UIWebView {
-    UIWebView *webView = [UIWebView new];
-    [self.view addSubview:webView];
-    [webView loadHTMLString:[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"index2" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil] baseURL:[[NSBundle mainBundle] bundleURL]];
 }
 
 @end
