@@ -97,6 +97,7 @@ class CocoaDebugTabBarController: UITabBarController {
     //MARK: - target action
     @objc func exit() {
         dismiss(animated: true, completion: nil)
+        _WindowHelper.shared.sendBackKeyWindow()
     }
     
     //MARK: - show more than 5 tabs by CocoaDebug
