@@ -1,49 +1,10 @@
-/*
-     File: _CustomHTTPProtocol.m
- Abstract: An NSURLProtocol subclass that overrides the built-in HTTP/HTTPS protocol.
-  Version: 1.1
- 
- Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
- Inc. ("Apple") in consideration of your agreement to the following
- terms, and your use, installation, modification or redistribution of
- this Apple software constitutes acceptance of these terms.  If you do
- not agree with these terms, please do not use, install, modify or
- redistribute this Apple software.
- 
- In consideration of your agreement to abide by the following terms, and
- subject to these terms, Apple grants you a personal, non-exclusive
- license, under Apple's copyrights in this original Apple software (the
- "Apple Software"), to use, reproduce, modify and redistribute the Apple
- Software, with or without modifications, in source and/or binary forms;
- provided that if you redistribute the Apple Software in its entirety and
- without modifications, you must retain this notice and the following
- text and disclaimers in all such redistributions of the Apple Software.
- Neither the name, trademarks, service marks or logos of Apple Inc. may
- be used to endorse or promote products derived from the Apple Software
- without specific prior written permission from Apple.  Except as
- expressly stated in this notice, no other rights or licenses, express or
- implied, are granted by Apple herein, including but not limited to any
- patent rights that may be infringed by your derivative works or by other
- works in which the Apple Software may be incorporated.
- 
- The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
- MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
- FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
- OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
- 
- IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
- OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
- MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
- AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
- STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
- POSSIBILITY OF SUCH DAMAGE.
- 
- Copyright (C) 2014 Apple Inc. All Rights Reserved.
- 
- */
+//
+//  Example
+//  man
+//
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
+//
 
 #import "_CustomHTTPProtocol.h"
 
@@ -55,7 +16,58 @@
 #import "_Swizzling.h"
 #import "_NetworkHelper.h"
 #import "_HttpDatasource.h"
-#import "_NSObject+Categories.h"
+#import "NSObject+CocoaDebug.h"
+
+// https://stackoverflow.com/questions/27604052/nsurlsessiontask-authentication-challenge-completionhandler-and-nsurlauthenticat
+@interface CPURLSessionChallengeSender : NSObject <NSURLAuthenticationChallengeSender>
+
+- (instancetype)initWithSessionCompletionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
+
+@end
+
+@implementation CPURLSessionChallengeSender
+{
+    void (^_sessionCompletionHandler)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential);
+}
+
+- (instancetype)initWithSessionCompletionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+{
+    self = [super init];
+
+    if (self)
+    {
+        _sessionCompletionHandler = [completionHandler copy];
+    }
+
+    return self;
+}
+
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    _sessionCompletionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+}
+
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    _sessionCompletionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+}
+
+- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+{
+    _sessionCompletionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+}
+
+- (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    _sessionCompletionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
+- (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    _sessionCompletionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+}
+
+@end
 
 //liman
 typedef NSURLSessionConfiguration *(*SessionConfigConstructor)(id,SEL);
@@ -140,6 +152,12 @@ static id<_CustomHTTPProtocolDelegate> sDelegate;
 + (void)start
 {
     [NSURLProtocol registerClass:self];
+}
+
+//liman
++ (void)stop
+{
+    [NSURLProtocol unregisterClass:self];
 }
 
 + (id<_CustomHTTPProtocolDelegate>)delegate
@@ -401,7 +419,7 @@ static NSString * kOurRecursiveRequestFlagProperty = @"com.apple.dts.CustomHTTPP
     
     
     //liman
-    if (![_NetworkHelper shared].isEnable) {
+    if (![_NetworkHelper shared].isNetworkEnable) {
         return;
     }
     
@@ -458,7 +476,7 @@ static NSString * kOurRecursiveRequestFlagProperty = @"com.apple.dts.CustomHTTPP
         }
     }
     
-    //处理500,404等错误
+    //Handling errors 404...
     model = [self handleError:self.error model:model];
     
     
@@ -734,13 +752,13 @@ static NSString * kOurRecursiveRequestFlagProperty = @"com.apple.dts.CustomHTTPP
 //liman
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
 {
-    //重定向 状态码 >=300 && < 400
+    //Redirect: code >=300 && < 400
     if (response && [response isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         NSInteger status = httpResponse.statusCode;
         if (status >= 300 && status < 400) {
             [[self client] URLProtocol:self wasRedirectedToRequest:request redirectResponse:response];
-            // 记得设置成nil，要不然正常请求会请求两次
+            //Remember to set to nil, otherwise the normal request will be requested twice
             request = nil;
         }
     }
@@ -778,7 +796,10 @@ static NSString * kOurRecursiveRequestFlagProperty = @"com.apple.dts.CustomHTTPP
         [self didReceiveAuthenticationChallenge:challenge completionHandler:completionHandler];
     } else {
 
-        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+//        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+        // Callback the original method
+        NSURLAuthenticationChallenge* challengeWrapper = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:[[CPURLSessionChallengeSender alloc] initWithSessionCompletionHandler:completionHandler]];
+        [self.client URLProtocol:self didReceiveAuthenticationChallenge:challengeWrapper];
     }
 }
 
@@ -904,7 +925,7 @@ static NSString * kOurRecursiveRequestFlagProperty = @"com.apple.dts.CustomHTTPP
     }
 }
 
-//处理500,404等错误
+//Handling errors 404...
 - (_HttpModel *)handleError:(NSError *)error model:(_HttpModel *)model {
     if (!error) {
         //https://httpcodes.co/status/

@@ -2,13 +2,13 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 #import "_NetworkHelper.h"
 #import "_CustomHTTPProtocol.h"
-#import "_NSObject+Categories.h"
+#import "NSObject+CocoaDebug.h"
 
 @interface _NetworkHelper()
 
@@ -32,22 +32,25 @@
 - (id)init {
     if (self = [super init])  {
         self.mainColor = [UIColor colorFromHexString:@"#42d459"];
-        self.logMaxCount = 1000;
-        self.isEnable = YES;
+        self.isNetworkEnable = YES;
     }
     return self;
 }
 
-- (void)enable
-{
-    self.isEnable = YES;
-    [NSURLProtocol registerClass:[_CustomHTTPProtocol class]];
+- (void)enable {
+    if (self.isNetworkEnable) {
+        return;
+    }
+    self.isNetworkEnable = YES;
+    [_CustomHTTPProtocol start];
 }
 
-- (void)disable
-{
-    self.isEnable = NO;
-    [NSURLProtocol unregisterClass:[_CustomHTTPProtocol class]];
+- (void)disable {
+    if (!self.isNetworkEnable) {
+        return;
+    }
+    self.isNetworkEnable = NO;
+    [_CustomHTTPProtocol stop];
 }
 
 @end

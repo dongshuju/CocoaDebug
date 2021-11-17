@@ -2,8 +2,8 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 #import "_SandboxerHelper.h"
@@ -21,6 +21,15 @@
 }
 
 #pragma mark - Public Methods
+
++ (instancetype)sharedInstance {
+    static id sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
 
 + (NSString *)fileModificationDateTextWithDate:(NSDate *)date {
     if (!date) { return @""; }
@@ -53,6 +62,20 @@
     NSInteger fileSize = [[fileAttributes objectForKey:NSFileSize] integerValue];
     NSString *fileSizeString = [NSByteCountFormatter stringFromByteCount:fileSize countStyle:NSByteCountFormatterCountStyleFile];
     return fileSizeString;
+}
+
+#pragma mark - tool
++ (NSString *)generateRandomId {
+    UInt64 time = [[NSDate date] timeIntervalSince1970] * 1000;
+    return [NSString stringWithFormat:@"%llu_%@", time, [self generateRandomString]];
+}
+
++ (NSString *)generateRandomString {
+    char data[10];
+    for (int x = 0; x < 10; ++x) {
+        data[x] = (char)('A' + (arc4random_uniform(26)));
+    }
+    return [[NSString alloc] initWithBytes:data length:10 encoding:NSUTF8StringEncoding];
 }
 
 @end

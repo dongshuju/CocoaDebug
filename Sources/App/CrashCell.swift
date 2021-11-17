@@ -2,21 +2,21 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
 
 class CrashCell: UITableViewCell {
-
-    @IBOutlet weak var textview: UITextView!
-
+    
+    @IBOutlet weak var textview: CustomTextView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         textview.isUserInteractionEnabled = false
     }
-
+    
     var crash: _CrashModel? {
         didSet {
             guard let crash = crash else {return}

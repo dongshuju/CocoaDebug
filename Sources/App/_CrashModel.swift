@@ -2,15 +2,15 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
 
 class _CrashModel: NSObject, NSCoding {
     
-    let id: String
+    var id: String
     var date: Date
     var reason: String?
     var name: String?

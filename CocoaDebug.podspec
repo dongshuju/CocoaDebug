@@ -1,31 +1,31 @@
 Pod::Spec.new do |s|
   s.name                = "CocoaDebug"
-  s.summary             = "iOS Debugging Tool"
+  s.version             = "1.7.2"
+  s.summary             = "iOS Debug Tool"
   s.homepage            = "https://github.com/CocoaDebug/CocoaDebug"
-  s.author              = {"CocoaDebug" => "man.li@shopee.com"}
+  s.author              = {"CocoaDebug" => "CocoaDebug@gmail.com"}
   s.license             = "MIT"
-  s.source_files        = "Sources", "Sources/**/*.{h,m,swift,c}"
+  s.source_files        = "Sources", "Sources/**/*.{h,m,mm,swift,c}"
   s.public_header_files = "Sources/**/*.h"
   s.resources           = "Sources/**/*.{png,xib,storyboard}"
   s.frameworks          = 'UIKit', 'Foundation'
-  s.requires_arc        = true
   s.platform            = :ios, "8.0"
-  s.swift_version       = '5.0'
-  s.version             = '1.0.1'
+  s.swift_version       = '4.2'
   s.source              = { :git => "https://github.com/CocoaDebug/CocoaDebug.git", :branch => 'master', :tag => s.version.to_s }
   s.requires_arc        = false
   s.requires_arc        = 
                           [
-                          'Classes/App', 
-                          'Classes/Categories', 
-                          'Classes/Core', 
-                          'Classes/CustomHTTPProtocol', 
-                          'Classes/Logs',
-                          'Classes/Network',
-                          'Classes/Sandbox',
-                          'Classes/Swizzling',
-                          'Classes/WHDebugTool', 
-                          'Classes/Window'
+                          'Sources/App/**/*.m',
+                          'Sources/Categories/**/*.m',
+                          'Sources/Core/**/*.m',
+                          'Sources/CustomHTTPProtocol/**/*.m',
+                          'Sources/Logs/**/*.m',
+                          'Sources/Network/**/*.m',
+                          'Sources/Sandbox/**/*.m',
+                          'Sources/Swizzling/**/*.m',
+                          'Sources/Window/**/*.m',
+                          'Sources/fishhook/**/*.c',
                           ]
-
+  # s.dependency "React/Core"
+  # s.dependency "Protobuf"
 end

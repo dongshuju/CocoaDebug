@@ -2,8 +2,8 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
@@ -14,41 +14,38 @@ protocol BubbleDelegate: class {
 }
 
 //https://httpcodes.co/status/
-private let _successStatusCodes = ["200","201","202","203","204","205","206","207","208","226"]
-private let _informationalStatusCodes = ["100","101","102","103","122"]
-private let _redirectionStatusCodes = ["300","301","302","303","304","305","306","307","308"]
+private var _successStatusCodes = ["200","201","202","203","204","205","206","207","208","226"]
+private var _informationalStatusCodes = ["100","101","102","103","122"]
+private var _redirectionStatusCodes = ["300","301","302","303","304","305","306","307","308"]
 
-private let _width: CGFloat = 60
-private let _height: CGFloat = 60
+private var _width: CGFloat = 25
+private var _height: CGFloat = 25
 
 class Bubble: UIView {
     
-    var hasPerformedSetup: Bool = false//liman
-    
     weak var delegate: BubbleDelegate?
     
-    public let width: CGFloat = _width
-    public let height: CGFloat = _height
+    public var width: CGFloat = _width
+    public var height: CGFloat = _height
     
-    private lazy var memoryLabel: _WHDebugConsoleLabel? = {
-        return _WHDebugConsoleLabel(frame: CGRect(x:0, y:2, width:_width, height:16))
+    private var numberLabel: UILabel? = {
+        return UILabel.init()
     }()
-    
-    private lazy var fpsLabel: _WHDebugConsoleLabel? = {
-        return _WHDebugConsoleLabel(frame: CGRect(x:0, y:22, width:_width, height:16))
-    }()
-    
-    private lazy var cpuLabel: _WHDebugConsoleLabel? = {
-        return _WHDebugConsoleLabel(frame: CGRect(x:0, y:42, width:_width, height:16))
-    }()
+    private var networkNumber: Int = 0
     
     
     static var originalPosition: CGPoint {
-        
         if CocoaDebugSettings.shared.bubbleFrameX != 0 && CocoaDebugSettings.shared.bubbleFrameY != 0 {
             return CGPoint(x: CGFloat(CocoaDebugSettings.shared.bubbleFrameX), y: CGFloat(CocoaDebugSettings.shared.bubbleFrameY))
         }
-        return CGPoint(x: 1.875 + _width/2, y: 200)
+        
+        var h = 0
+        if #available(iOS 11.0, *) {
+            if UIApplication.shared.keyWindow?.safeAreaInsets.top ?? 0 > 24.0 {
+                h = 16;
+            }
+        }
+        return CGPoint(x: 1.875 + _width/2, y: UIScreen.main.bounds.size.height/2 - _height - CGFloat(h))
     }
     
     static var size: CGSize {return CGSize(width: _width, height: _height)}
@@ -56,19 +53,20 @@ class Bubble: UIView {
     
     //MARK: - tool
     fileprivate func initLabelEvent(_ content: String, _ foo: Bool) {
-        
         if content == "🚀" || content == "❌"
         {
             //step 0
-            let WH: CGFloat = 25
+            let WH: CGFloat = 20
             //step 1
             let label = UILabel()
             label.text = content
+            label.font = UIFont.boldSystemFont(ofSize: 14)
+            
             //step 2
             if foo == true {
                 label.frame = CGRect(x: self.frame.size.width/2 - WH/2, y: self.frame.size.height/2 - WH/2, width: WH, height: WH)
                 self.addSubview(label)
-            }else{
+            } else {
                 label.frame = CGRect(x: self.center.x - WH/2, y: self.center.y - WH/2, width: WH, height: WH)
                 self.superview?.addSubview(label)
             }
@@ -89,6 +87,7 @@ class Bubble: UIView {
             label.text = content
             label.textAlignment = .center
             label.adjustsFontSizeToFitWidth = true
+            label.font = UIFont.boldSystemFont(ofSize: 14)
             
             if _informationalStatusCodes.contains(content) {
                 label.textColor = "#4b8af7".hexColor
@@ -100,18 +99,11 @@ class Bubble: UIView {
                 label.textColor = .red
             }
             
-            //step 2
-            if #available(iOS 8.2, *) {
-                label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-            } else {
-                // Fallback on earlier versions
-                label.font = UIFont.boldSystemFont(ofSize: 17)
-            }
             //step 3
             if foo == true {
                 label.frame = CGRect(x: self.frame.size.width/2 - WH/2, y: self.frame.size.height/2 - WH/2, width: WH, height: WH)
                 self.addSubview(label)
-            }else{
+            } else {
                 label.frame = CGRect(x: self.center.x - WH/2, y: self.center.y - WH/2, width: WH, height: WH)
                 self.superview?.addSubview(label)
             }
@@ -128,53 +120,30 @@ class Bubble: UIView {
     
     fileprivate func initLayer() {
         self.backgroundColor = .black
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowRadius = 5
-        self.layer.shadowOpacity = 0.8
-        self.layer.cornerRadius = 10
-        self.layer.shadowOffset = CGSize.zero
-        self.layer.masksToBounds = true
+        self.layer.cornerRadius = _width/2
         self.sizeToFit()
         
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = bounds
-        gradientLayer.cornerRadius = 10
-        gradientLayer.colors = Color.colorGradientHead
-        self.layer.addSublayer(gradientLayer)
-        
-        
-        if let memoryLabel = memoryLabel, let fpsLabel = fpsLabel, let cpuLabel = cpuLabel {
-            self.addSubview(memoryLabel)
-            self.addSubview(fpsLabel)
-            self.addSubview(cpuLabel)
+        if let numberLabel = numberLabel {
+            numberLabel.text = String(networkNumber)
+            numberLabel.textColor = .white
+            numberLabel.textAlignment = .center
+            numberLabel.adjustsFontSizeToFitWidth = true
+            numberLabel.isHidden = true
+            numberLabel.frame = CGRect(x:0, y:0, width:_width, height:_height)
+            self.addSubview(numberLabel)
         }
-        
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(Bubble.tap))
         self.addGestureRecognizer(tapGesture)
         
-        // ***************** Private API *****************
-        if #available(iOS 11.0, *) {
-            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(Bubble.longPress(sender:)))
-            self.addGestureRecognizer(longPress)
-            tapGesture.require(toFail: longPress)
-        } else {
-            // Fallback on earlier versions
-            if #available(iOS 10.0, *) {
-                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(Bubble.longPress2(sender:)))
-                self.addGestureRecognizer(longPress)
-                tapGesture.require(toFail: longPress)
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        // ***************** Private API *****************
+        let longTap = UILongPressGestureRecognizer.init(target: self, action: #selector(Bubble.longTap))
+        self.addGestureRecognizer(longTap)
     }
     
     func changeSideDisplay() {
         UIView.animate(withDuration: 0.5, delay: 0.1, usingSpringWithDamping: 0.5,
                        initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
-        }, completion: nil)
+                       }, completion: nil)
     }
     
     func updateOrientation(newSize: CGSize) {
@@ -196,17 +165,16 @@ class Bubble: UIView {
         self.addGestureRecognizer(panGesture)
         
         //notification
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadHttp_notification(_:)), name: NSNotification.Name(rawValue: "reloadHttp_CocoaDebug"), object: nil)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "reloadHttp_CocoaDebug"), object: nil, queue: OperationQueue.main) { [weak self] notification in
+            self?.reloadHttp_notification(notification)
+        }
         
-        //
-        _WHDebugFPSMonitor.sharedInstance()?.valueBlock = { [weak self] value in
-            self?.fpsLabel?.update(with: .FPS, value: value)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "deleteAllLogs_CocoaDebug"), object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.deleteAllLogs_notification()
         }
-        _WHDebugMemoryMonitor.sharedInstance()?.valueBlock = { [weak self] value in
-            self?.memoryLabel?.update(with: .memory, value: value)
-        }
-        _WHDebugCpuMonitor.sharedInstance()?.valueBlock = { [weak self] value in
-            self?.cpuLabel?.update(with: .CPU, value: value)
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "SHOW_COCOADEBUG_FORCE"), object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.show_cocoadebug_force()
         }
     }
     
@@ -223,67 +191,79 @@ class Bubble: UIView {
     //网络通知
     @objc func reloadHttp_notification(_ notification: Notification) {
         
-        dispatch_main_async_safe { [weak self] in
-            guard let userInfo = notification.userInfo else {return}
-            let statusCode = userInfo["statusCode"] as? String
-            
-            if _successStatusCodes.contains(statusCode ?? "") {
-                self?.initLabelEvent("🚀", true)
-                self?.initLabelEvent("🚀", false)
-            }
-            else if statusCode == "0" { //"0" means network unavailable
-                self?.initLabelEvent("❌", true)
-                self?.initLabelEvent("❌", false)
-            }
-            else{
-                guard let statusCode = statusCode else {return}
-                self?.initLabelEvent(statusCode, true)
-                self?.initLabelEvent(statusCode, false)
-            }
+        guard let userInfo = notification.userInfo else {return}
+        let statusCode = userInfo["statusCode"] as? String
+        
+        if _successStatusCodes.contains(statusCode ?? "") {
+            self.initLabelEvent("🚀", true)
+        }
+        else if statusCode == "0" { //"0" means network unavailable
+            self.initLabelEvent("❌", true)
+        }
+        else {
+            guard let statusCode = statusCode else {return}
+            self.initLabelEvent(statusCode, true)
+        }
+        
+        
+        self.networkNumber = (self.networkNumber ) + 1
+        self.numberLabel?.text = String(networkNumber)
+        
+        
+        if self.networkNumber == 0 {
+            self.numberLabel?.isHidden = true
+        } else {
+            self.numberLabel?.isHidden = false
+        }
+        
+        if networkNumber >= 0 && networkNumber < 10 {
+            self.numberLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        } else if networkNumber >= 10 && networkNumber < 100 {
+            self.numberLabel?.font = UIFont.boldSystemFont(ofSize: 11)
+        } else if networkNumber >= 100 && networkNumber < 1000 {
+            self.numberLabel?.font = UIFont.boldSystemFont(ofSize: 9)
+        } else if networkNumber >= 1000 && networkNumber < 10000 {
+            self.numberLabel?.font = UIFont.boldSystemFont(ofSize: 7.5)
+        } else {
+            self.numberLabel?.font = UIFont.boldSystemFont(ofSize: 7)
         }
     }
+    
+    
+    @objc func deleteAllLogs_notification() {
+        self.networkNumber = 0
+        
+        self.numberLabel?.text = String(networkNumber)
+        
+        if self.networkNumber == 0 {
+            self.numberLabel?.isHidden = true
+        } else {
+            self.numberLabel?.isHidden = false
+        }
+    }
+    
+    @objc func show_cocoadebug_force() {
+        CocoaDebugSettings.shared.showBubbleAndWindow = !CocoaDebugSettings.shared.showBubbleAndWindow
+        CocoaDebugSettings.shared.showBubbleAndWindow = !CocoaDebugSettings.shared.showBubbleAndWindow
+    }
+    
     
     //MARK: - target action
     @objc func tap() {
         delegate?.didTapBubble()
     }
-
-    //***************** Private API *****************
-    @available(iOS 11.0, *)
-    @objc func longPress(sender: UILongPressGestureRecognizer) {
-        if (sender.state == .began) {
-            guard let cls = NSClassFromString("UIDebuggingInformationOverlay") as? UIWindow.Type else {return}
-            
-            if !self.hasPerformedSetup {
-                cls.perform(NSSelectorFromString("prepareDebuggingOverlay"))
-                self.hasPerformedSetup = true
-            }
-            
-            let tapGesture = UITapGestureRecognizer()
-            tapGesture.state = .ended
-            
-            let handlerCls = NSClassFromString("UIDebuggingInformationOverlayInvokeGestureHandler") as! NSObject.Type
-            let handler = handlerCls.perform(NSSelectorFromString("mainHandler")).takeUnretainedValue()
-            let _ = handler.perform(NSSelectorFromString("_handleActivationGesture:"), with: tapGesture)
-        }
-    }
     
-    @available(iOS 10.0, *)
-    @objc func longPress2(sender: UILongPressGestureRecognizer) {
-        if (sender.state == .began) {
-            let overlayClass = NSClassFromString("UIDebuggingInformationOverlay") as? UIWindow.Type
-            _ = overlayClass?.perform(NSSelectorFromString("prepareDebuggingOverlay"))
-            let overlay = overlayClass?.perform(NSSelectorFromString("overlay")).takeUnretainedValue() as? UIWindow
-            _ = overlay?.perform(NSSelectorFromString("toggleVisibility"))
-        }
+    @objc func longTap() {
+        _HttpDatasource.shared().reset()
+        CocoaDebugSettings.shared.networkLastIndex = 0
+        NotificationCenter.default.post(name: NSNotification.Name("deleteAllLogs_CocoaDebug"), object: nil, userInfo: nil)
     }
-    //***************** Private API *****************
     
     @objc func panDidFire(panner: UIPanGestureRecognizer) {
         if panner.state == .began {
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveLinear, animations: { [weak self] in
                 self?.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-                }, completion: nil)
+            }, completion: nil)
         }
         
         let offset = panner.translation(in: self.superview)
@@ -296,7 +276,7 @@ class Bubble: UIView {
         if panner.state == .ended || panner.state == .cancelled {
             
             var frameInset: UIEdgeInsets
-
+            
             if #available(iOS 11.0, *) {
                 frameInset = UIApplication.shared.keyWindow?.safeAreaInsets ?? UIEdgeInsets(top: UIApplication.shared.statusBarFrame.height, left: 0, bottom: 0, right: 0)
             } else {
@@ -332,13 +312,15 @@ class Bubble: UIView {
                 finalY = Double(self.height/8*4.25) + Double(frameInset.top)
             }
             
+            //
+            CocoaDebugSettings.shared.bubbleFrameX = Float(finalX)
+            CocoaDebugSettings.shared.bubbleFrameY = Float(finalY)
+            
+            //
             UIView.animate(withDuration: durationAnimation * 5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 6, options: .allowUserInteraction, animations: { [weak self] in
                 self?.center = CGPoint(x: finalX, y: finalY)
                 self?.transform = CGAffineTransform.identity
-                }, completion: { _ in
-                    CocoaDebugSettings.shared.bubbleFrameX = Float(finalX)
-                    CocoaDebugSettings.shared.bubbleFrameY = Float(finalY)
-            })
+            }, completion:nil)
         }
     }
 }

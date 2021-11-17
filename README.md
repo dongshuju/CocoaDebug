@@ -1,132 +1,110 @@
-| <img alt="logo" src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/logo.png" width="250"/> | <ul align="left"><li><a href="https://github.com/CocoaDebug/CocoaDebug/wiki/%E4%B8%AD%E6%96%87%E4%BB%8B%E7%BB%8D">中文介绍</a><li><a href="#introduction">Introduction</a><li><a href="#installation">Installation</a><li><a href="#usage">Usage</a><li><a href="#parameters">Parameters</a></ul> |
+| <img alt="logo" src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/logo.png" width="250"/> | <ul align="left"><li><a href="#introduction">Introduction</a><li><a href="#installation">Installation</a><li><a href="#usage">Usage</a><li><a href="#parameters">Parameters</a></ul> |
 | -------------- | -------------- |
-| Travis CI | [![Build Status](https://travis-ci.org/CocoaDebug/CocoaDebug.svg?branch=master)](https://travis-ci.org/CocoaDebug/CocoaDebug) |
-| Codacy | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6aac8606d10f403a811cafdf870bb552)](https://www.codacy.com/app/CocoaDebug/CocoaDebug?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CocoaDebug/CocoaDebug&amp;utm_campaign=Badge_Grade) |
-| Codecov | [![codecov](https://codecov.io/gh/CocoaDebug/CocoaDebug/branch/master/graph/badge.svg)](https://codecov.io/gh/CocoaDebug/CocoaDebug) |
-| Frameworks | [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/CocoaDebug.svg)](https://img.shields.io/cocoapods/v/CocoaDebug.svg) |
-| Languages | ![Languages](https://img.shields.io/badge/languages-Swift%20%7C%20ObjC-blue.svg) |
+| Version | [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/CocoaDebug.svg)](https://img.shields.io/cocoapods/v/CocoaDebug.svg) |
 | Platform | ![Platform](https://img.shields.io/badge/platforms-iOS%208.0+-blue.svg) |
-| Licence | <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="License MIT"/> |
+| Languages | ![Languages](https://img.shields.io/badge/languages-Swift%20%7C%20ObjC-blue.svg) |
 
 <span style="float:none" />
 
+## Screenshot
+
+<img src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/a1.png" width="250">
+<img src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/a2.png" width="250">
+<img src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/a3.png" width="250">
+<img src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/a4.png" width="250">
+<img src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/a5.png" width="250">
+<img src="https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/a6.png" width="250">
+
 ## Introduction
 
-![example](https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/pic/example.gif)
-
-- [x] Shake to hide or show the black bubble. (support both device and simulator)
-
-- [x] Long press the black bubble to show `UIDebuggingInformationOverlay`. (Apple's Private API, support iOS 10/11/12)
-
-- [x] Application memory usage and *FPS*.
-
-- [x] List all `print()` and `NSLog()` messages which have been written by developer in Xcode.
-
-- [x] List of all the network requests sent by the application.
-
-- [x] List crash errors.
+- [x] Shake to hide or show the black bubble. (Support iPhone device and simulator)
 
 - [x] Share network details via email or copy to clipboard when you are in the *Network Details* page.
 
-- [x] Copy logs. (long press the text, then select all or select copy)
+- [x] Copy logs. (Long press the text, then select all or select copy)
 
 - [x] Search logs by keyword.
 
+- [x] Long press the black bubble to clean all network logs.
+
+- [x] Detect *UI Blocking*.
+
+- [x] List crash errors.
+
 - [x] List application and device informations, including: *version*, *build*, *bundle name*, *bundle id*, *screen resolution*, *device*, *iOS version*
+
+- [x] List all network requests sent by the application. (Support *JSON* and Google's *Protocol buffers*)
 
 - [x] List all sandbox folders and files, supporting to preview and edit.
 
-- [x] List HTML logs, including `console.log()`,`console.debug()`,`console.warn()`,`console.error()`,`console. info()`. (support both `WKWebView` and `UIWebView`).
+- [x] List all *WKWebView* consoles.
 
-- [x] Support `JSON` and Google's `Protocol buffers`
+- [x] List all *React Native* JavaScript consoles and Native logs.
+
+- [x] List all *print()* and *NSLog()* messages which have been written by developer in Xcode.
 
 ## Installation
 
-### CocoaPods
+### *CocoaPods* *(Preferred)*
 
 ```ruby
 target 'YourTargetName' do
+    use_frameworks!
     pod 'CocoaDebug', :configurations => ['Debug']
 end
 ```
 
-### Carthage
+### *Carthage*
 
-```ogdl
-github "CocoaDebug/CocoaDebug"
+```ruby
+github  "CocoaDebug/CocoaDebug"
 ```
 
-### Framework
+### *Framework*
 
-[Download](https://github.com/CocoaDebug/CocoaDebug/raw/master/CocoaDebug.framework.zip)
+*[CocoaDebug.framework](https://raw.githubusercontent.com/CocoaDebug/CocoaDebug/master/CocoaDebug.framework.zip) (Version 1.7.2)*
 
-> WARNING: Don't submit `.ipa` to AppStore which has been linked with the `CocoaDebug.framework`. This [Integration Guide](https://github.com/CocoaDebug/CocoaDebug/wiki/Integration-Guide) outline a way to use build configurations to isolate linking the framework to `Debug` builds only.
+> WARNING: Never ship a product which has been linked with the CocoaDebug framework. The [Integration Guide](https://github.com/CocoaDebug/CocoaDebug/wiki/Integration-Guide) outline a way to use build configurations to isolate linking the framework to Debug builds.
+
+> [Xcode12 build error solution](https://stackoverflow.com/questions/63267897/building-for-ios-simulator-but-the-linked-framework-framework-was-built)
 
 ## Usage
 
-### Swift
-	
-	//AppDelegate.swift
-	 
-    #if DEBUG
-        import CocoaDebug
-    #endif
-	
-    #if DEBUG
-        CocoaDebug.enable()
-    #endif
-
-    public func print<T>(file: String = #file, function: String = #function, line: Int = #line, _ message: T, color: UIColor = .white) {
-        #if DEBUG
-            swiftLog(file, function, line, message, color, false)
-        #endif
-    }
-	
-
-### Objective-C
-	
-	//AppDelegate.m
-	 
-    #ifdef DEBUG
-        @import CocoaDebug;
-    #endif
-	
-    #ifdef DEBUG
-        [CocoaDebug enable];
-    #endif
-
-> Please check `Example_Swift.xcodeproj` and `Example_Objc.xcodeproj` for more advanced usage.
-
-> NOTE: Be careful with `Other Swift Flags` & `Preprocessor Macros` when using Swift & Objective-C in one project. You can refer to [here](https://stackoverflow.com/questions/24111854/in-absence-of-preprocessor-macros-is-there-a-way-to-define-practical-scheme-spe).  
+- Don't need to do anything. CocoaDebug will start automatically.
+- To capture logs from Xcode with codes: (You can also set this in *CocoaDebug->App->Monitor->Applogs* without any codes.)
+```swift
+CocoaDebugSettings.shared.enableLogMonitoring = true //The default value is false
+```
+- Check [AppDelegate.m](https://github.com/CocoaDebug/CocoaDebug/blob/master/Example_Objc/Example_Objc/AppDelegate.m) OR [AppDelegate.swift](https://github.com/CocoaDebug/CocoaDebug/blob/master/Example_Swift/Example_Swift/AppDelegate.swift) for more advanced usage.
 
 ## Parameters
 
 When you initialize CocoaDebug, you can customize the following parameter values before `CocoaDebug.enable()`.
 
-- `serverURL` - If the crawled URLs contain server URL ,set these URLs bold font to be marked. not mark when this value is nil. default value is **nil**.
+- `serverURL` - If the captured URLs contain server URL, CocoaDebug set server URL bold font to be marked. Not mark when this value is nil. Default value is **nil**.
 
-- `ignoredURLs` - Set the URLs which should not crawled, ignoring case, crawl all URLs when the value is nil. default value is **nil**.
+- `ignoredURLs` - Set the URLs which should not been captured, CocoaDebug capture all URLs when the value is nil. Default value is **nil**.
 
-- `onlyURLs` - Set the URLs which are only crawled, ignoring case, crawl all URLs when the value is nil. default value is **nil**.
+- `onlyURLs` - Set the URLs which are only been captured, CocoaDebug capture all URLs when the value is nil. Default value is **nil**.
 
-- `tabBarControllers` - Set controllers to be added as child controllers of UITabBarController. default value is **nil**.
+- `ignoredPrefixLogs` - Set the prefix Logs which should not been captured, CocoaDebug capture all Logs when the value is nil. Default value is **nil**.
 
-- `logMaxCount` - The maximum count of logs which CocoaDebug display. default value is **1000**.
+- `onlyPrefixLogs` - Set the prefix Logs which are only been captured, CocoaDebug capture all Logs when the value is nil. Default value is **nil**.
 
-- `emailToRecipients` - Set the initial recipients to include in the email’s “To” field when share via email. default value is **nil**.
+- `additionalViewController` - Add an additional UIViewController as child controller of CocoaDebug's main UITabBarController. Default value is **nil**.
 
-- `emailCcRecipients` - Set the initial recipients to include in the email’s “Cc” field when share via email. default value is **nil**.
+- `emailToRecipients` - Set the initial recipients to include in the email’s “To” field when share via email. Default value is **nil**.
 
-- `mainColor` - Set the main color with hexadecimal format. default value is **#42d459**.
+- `emailCcRecipients` - Set the initial recipients to include in the email’s “Cc” field when share via email. Default value is **nil**.
 
-## TODO
+- `mainColor` - Set CocoaDebug's main color with hexadecimal format. Default value is **#42d459**.
 
-- [Unit Testing](https://codecov.io/gh/CocoaDebug/CocoaDebug)
+- `protobufTransferMap` - Protobuf data transfer to JSON map. Default value is **nil**.
 
 ## Thanks
 
 Special thanks to [remirobert](https://github.com/remirobert).
 
-## License
+## Reference
 
-CocoaDebug is released under the [MIT license](https://github.com/CocoaDebug/CocoaDebug/blob/master/LICENSE).
+[https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html](https://developer.apple.com/library/archive/samplecode/CustomHTTPProtocol/Introduction/Intro.html)

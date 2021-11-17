@@ -2,15 +2,15 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
 
 class LogCell: UITableViewCell {
-
-    @IBOutlet weak var labelContent: UITextView!
+    
+    @IBOutlet weak var labelContent: CustomTextView!
     @IBOutlet weak var viewTypeLogColor: UIView!
     
     var model: _OCLogModel? {
@@ -20,27 +20,49 @@ class LogCell: UITableViewCell {
             labelContent.text = nil
             labelContent.text = model.str
             labelContent.attributedText = model.attr
+            
             labelContent.textContainer.lineBreakMode = NSLineBreakMode.byCharWrapping
+            labelContent.textContainer.lineFragmentPadding = 0
+            labelContent.textContainerInset = .zero
+            labelContent.isUserInteractionEnabled = false
             
             //tag
             if model.isTag == true {
                 self.contentView.backgroundColor = "#007aff".hexColor
-            }else{
-                self.contentView.backgroundColor = .black
+            } else {
+                //isSelected
+                if model.isSelected == true {
+                    self.contentView.backgroundColor = "#222222".hexColor
+                } else {
+                    self.contentView.backgroundColor = .black
+                }
             }
         }
     }
+}
+
+
+class CustomTextView : UITextView {
     
-    
-    //MARK: - override
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if action == #selector(selectAll(_:)) {
-            return true
-        }
-        return super.canPerformAction(action, withSender: sender)
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)!
+        self.inputView = UIView.init(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
     }
     
-    override func selectAll(_ sender: Any?) {
-        labelContent.selectAll(sender)
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(selectAll) {
+            if let range = selectedTextRange, range.start == beginningOfDocument, range.end == endOfDocument {
+                return false
+            }
+            return !text.isEmpty
+        }
+        else if action == #selector(paste(_:)) {
+            return false
+        }
+        else if action == #selector(cut(_:)) {
+            return false
+        }
+        
+        return super.canPerformAction(action, withSender: sender)
     }
 }

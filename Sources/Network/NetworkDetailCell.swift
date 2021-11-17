@@ -2,8 +2,8 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ import UIKit
 class NetworkDetailCell: UITableViewCell {
     
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var contentTextView: UITextView!
+    @IBOutlet weak var contentTextView: CustomTextView!
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var titleView: UIView!
     @IBOutlet weak var topLine: UIView!
@@ -32,20 +32,20 @@ class NetworkDetailCell: UITableViewCell {
             titleLabel.text = detailModel?.title
             contentTextView.text = detailModel?.content
             
-            //图片
+            //image
             if detailModel?.image == nil {
                 imgView.isHidden = true
-            }else{
+            } else {
                 imgView.isHidden = false
                 imgView.image = detailModel?.image
             }
             
-            //自动隐藏内容
+            //Hide content automatically
             if detailModel?.blankContent == "..." {
                 middleLine.isHidden = true
                 imgView.isHidden = true
                 titleViewBottomSpaceToMiddleLine.constant = -12.5 + 2
-            }else{
+            } else {
                 middleLine.isHidden = false
                 if detailModel?.image != nil {
                     imgView.isHidden = false
@@ -53,10 +53,10 @@ class NetworkDetailCell: UITableViewCell {
                 titleViewBottomSpaceToMiddleLine.constant = 0
             }
             
-            //底部分割线
+            //Bottom dividing line
             if detailModel?.isLast == true {
                 bottomLine.isHidden = false
-            }else{
+            } else {
                 bottomLine.isHidden = true
             }
         }
@@ -74,23 +74,10 @@ class NetworkDetailCell: UITableViewCell {
     
     
     //MARK: - target action
-    //编辑
+    //edit
     @objc func tapEditView() {
         if let tapEditViewCallback = tapEditViewCallback {
             tapEditViewCallback(detailModel)
         }
-    }
-    
-    
-    //MARK: - override
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if action == #selector(selectAll(_:)) {
-            return true
-        }
-        return super.canPerformAction(action, withSender: sender)
-    }
-    
-    override func selectAll(_ sender: Any?) {
-        contentTextView.selectAll(sender)
     }
 }

@@ -2,19 +2,23 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
 
 class CrashDetailViewController: UITableViewController {
     
-        @IBOutlet weak var textviewName: UITextView!
-    @IBOutlet weak var textviewReason: UITextView!
-    @IBOutlet weak var textviewStackTraces: UITextView!
+    @IBOutlet weak var textviewName: CustomTextView!
+    @IBOutlet weak var textviewReason: CustomTextView!
+    @IBOutlet weak var textviewStackTraces: CustomTextView!
+    @IBOutlet weak var naviItem: UINavigationItem!
+    
+    var naviItemTitleLabel: UILabel?
+    
     var crash: _CrashModel?
-
+    
     static func instanceFromStoryBoard() -> CrashDetailViewController {
         let storyboard = UIStoryboard(name: "App", bundle: Bundle(for: CocoaDebug.self))
         return storyboard.instantiateViewController(withIdentifier: "CrashDetailViewController") as! CrashDetailViewController
@@ -23,14 +27,21 @@ class CrashDetailViewController: UITableViewController {
     //MARK - init
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
+        naviItemTitleLabel = UILabel.init(frame: CGRect(x: 0, y: 0, width: 80, height: 40))
+        naviItemTitleLabel?.textAlignment = .center
+        naviItemTitleLabel?.textColor = Color.mainGreen
+        naviItemTitleLabel?.font = .boldSystemFont(ofSize: 20)
+        naviItemTitleLabel?.text = "Details"
+        naviItem.titleView = naviItemTitleLabel
+        
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50
         tableView.delegate = self
-
+        
         textviewName.text = "\(crash?.name ?? "N/A")"
         textviewReason.text = "\(crash?.reason ?? "N/A")"
-
+        
         let contentStack = crash?.callStacks?.reduce("", {
             $0 == "" ? $1 : $0 + "\n" + $1
         })

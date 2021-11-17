@@ -2,8 +2,8 @@
 //  WKWebView+Swizzling.m
 //  1233213
 //
-//  Created by man on 2019/1/8.
-//  Copyright © 2019年 man. All rights reserved.
+//  Created by man 2019/1/8.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 #import <WebKit/WebKit.h>
@@ -20,7 +20,7 @@
 #pragma mark - life
 + (void)load {
     
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"disableHTMLConsoleMonitoring_CocoaDebug"]) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableWKWebViewMonitoring_CocoaDebug"]) {
         
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
@@ -42,22 +42,36 @@
             if (!class_addMethod([self class], original_sel2, method_getImplementation(replaced_method2), method_getTypeEncoding(replaced_method2))) {
                 method_exchangeImplementations(original_method2, replaced_method2);
             }
+            
+            SEL original_sel3 = NSSelectorFromString(@"willDealloc");
+            SEL replaced_sel3 = @selector(replaced_willDealloc);
+            Method replaced_method3 = class_getInstanceMethod([self class], replaced_sel3);
+            class_addMethod([self class], original_sel3, method_getImplementation(replaced_method3), method_getTypeEncoding(replaced_method3));
         });
     }
 }
 
 #pragma mark - replaced method
+
+- (BOOL)replaced_willDealloc {
+    // removeScriptMessageHandlerForName
+    [self.configuration.userContentController removeScriptMessageHandlerForName:@"log"];
+    [self.configuration.userContentController removeScriptMessageHandlerForName:@"error"];
+    [self.configuration.userContentController removeScriptMessageHandlerForName:@"warn"];
+    [self.configuration.userContentController removeScriptMessageHandlerForName:@"debug"];
+    [self.configuration.userContentController removeScriptMessageHandlerForName:@"info"];
+    
+    return true;
+}
+
 - (void)replaced_dealloc {
     //WKWebView
-    [_ObjcLog logWithFile:"[WKWebView]" function:"" line:0 color:[UIColor redColor] unicodeToChinese:NO message:@"-------------------------------- dealloc --------------------------------"];
+    [_ObjcLog logWithFile:"[WKWebView]" function:"" line:0 color:[UIColor redColor] message:@"-------------------------------- dealloc --------------------------------"];
 }
 
 - (instancetype)replaced_initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration {
     //WKWebView
-    [_ObjcLog logWithFile:"[WKWebView]" function:"" line:0 color:[_NetworkHelper shared].mainColor unicodeToChinese:NO message:@"----------------------------------- init -----------------------------------"];
-    
-    //
-    [configuration.userContentController removeAllUserScripts];
+    [_ObjcLog logWithFile:"[WKWebView]" function:"" line:0 color:[_NetworkHelper shared].mainColor message:@"----------------------------------- init -----------------------------------"];
     
     [self log:configuration];
     [self error:configuration];
@@ -146,14 +160,12 @@
 
 
 
+#pragma mark - WKScriptMessageHandler
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
-
-#pragma mark - WKScriptMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
-    [_ObjcLog logWithFile:"[WKWebView]" function:[message.name UTF8String] line:0 color:[UIColor whiteColor] unicodeToChinese:NO message:message.body];
+    [_ObjcLog logWithFile:"[WKWebView]" function:[message.name UTF8String] line:0 color:[UIColor whiteColor] message:message.body];
 }
-
 #pragma clang diagnostic pop
 
 @end

@@ -21,16 +21,16 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef _fishhook_h
-#define _fishhook_h
+#ifndef fishhook_h
+#define fishhook_h
 
 #include <stddef.h>
 #include <stdint.h>
 
-#if !defined(_FISHHOOK_EXPORT)
-#define _FISHHOOK_VISIBILITY __attribute__((visibility("hidden")))
+#if !defined(FISHHOOK_EXPORT)
+#define FISHHOOK_VISIBILITY __attribute__((visibility("hidden")))
 #else
-#define _FISHHOOK_VISIBILITY __attribute__((visibility("default")))
+#define FISHHOOK_VISIBILITY __attribute__((visibility("default")))
 #endif
 
 #ifdef __cplusplus
@@ -55,14 +55,14 @@ struct rebinding {
  * rebind are added to the existing list of rebindings, and if a given symbol
  * is rebound more than once, the later rebinding will take precedence.
  */
-_FISHHOOK_VISIBILITY
+FISHHOOK_VISIBILITY
 int rebind_symbols(struct rebinding rebindings[], size_t rebindings_nel);
 
 /*
  * Rebinds as above, but only in the specified image. The header should point
  * to the mach-o header, the slide should be the slide offset. Others as above.
  */
-_FISHHOOK_VISIBILITY
+FISHHOOK_VISIBILITY
 int rebind_symbols_image(void *header,
                          intptr_t slide,
                          struct rebinding rebindings[],
@@ -72,5 +72,5 @@ int rebind_symbols_image(void *header,
 }
 #endif //__cplusplus
 
-#endif //_fishhook_h
+#endif //fishhook_h
 

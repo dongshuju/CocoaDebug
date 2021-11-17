@@ -2,8 +2,8 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 #import "_OCLogStoreManager.h"
@@ -27,82 +27,101 @@
 {
     self = [super init];
     if (self) {
-        self.defaultLogArray = [NSMutableArray arrayWithCapacity:[[_NetworkHelper shared] logMaxCount]];
-        self.colorLogArray = [NSMutableArray arrayWithCapacity:[[_NetworkHelper shared] logMaxCount]];
-        self.h5LogArray = [NSMutableArray arrayWithCapacity:[[_NetworkHelper shared] logMaxCount]];
+        self.normalLogArray = [NSMutableArray arrayWithCapacity:1000 + 100];
+        self.rnLogArray = [NSMutableArray arrayWithCapacity:1000 + 100];
+        self.webLogArray = [NSMutableArray arrayWithCapacity:1000 + 100];
     }
     return self;
 }
 
 - (void)addLog:(_OCLogModel *)log
 {
-    if (log.h5LogType == H5LogTypeNone)
+    if (![log.content isKindOfClass:[NSString class]]) {return;}
+    
+    //log过滤, 忽略大小写
+    for (NSString *prefixStr in [_NetworkHelper shared].onlyPrefixLogs) {
+        if (![log.content hasPrefix:prefixStr]) {
+            return;
+        }
+    }
+    //log过滤, 忽略大小写
+    for (NSString *prefixStr in [_NetworkHelper shared].ignoredPrefixLogs) {
+        if ([log.content hasPrefix:prefixStr]) {
+            return;
+        }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    if (log.logType == CocoaDebugLogTypeNormal)
     {
-        if (log.color == [UIColor whiteColor] || log.color == nil)
-        {
-            //白色
-            if ([self.defaultLogArray count] >= [[_NetworkHelper shared] logMaxCount]) {
-                if (self.defaultLogArray.count > 0) {
-                    [self.defaultLogArray removeObjectAtIndex:0];
-                }
+        //normal
+        if ([self.normalLogArray count] >= 1000) {
+            if (self.normalLogArray.count > 0) {
+                [self.normalLogArray removeObjectAtIndex:0];
             }
-            [self.defaultLogArray addObject:log];
         }
-        else
-        {
-            //彩色
-            if ([self.colorLogArray count] >= [[_NetworkHelper shared] logMaxCount]) {
-                if (self.colorLogArray.count > 0) {
-                    [self.colorLogArray removeObjectAtIndex:0];
-                }
+        
+        [self.normalLogArray addObject:log];
+    }
+    else if (log.logType == CocoaDebugLogTypeRN)
+    {
+        //rn
+        if ([self.rnLogArray count] >= 1000) {
+            if (self.rnLogArray.count > 0) {
+                [self.rnLogArray removeObjectAtIndex:0];
             }
-            [self.colorLogArray addObject:log];
         }
+        
+        [self.rnLogArray addObject:log];
     }
     else
     {
-        //H5
-        if ([self.h5LogArray count] >= [[_NetworkHelper shared] logMaxCount]) {
-            if (self.h5LogArray.count > 0) {
-                [self.h5LogArray removeObjectAtIndex:0];
+        //web
+        if ([self.webLogArray count] >= 1000) {
+            if (self.webLogArray.count > 0) {
+                [self.webLogArray removeObjectAtIndex:0];
             }
         }
-        [self.h5LogArray addObject:log];
+        
+        [self.webLogArray addObject:log];
     }
 }
 
 - (void)removeLog:(_OCLogModel *)log
 {
-    if (log.h5LogType == H5LogTypeNone)
+    if (log.logType == CocoaDebugLogTypeNormal)
     {
-        if (log.color == [UIColor whiteColor] || log.color == nil) {
-            //白色
-            [self.defaultLogArray removeObject:log];
-        }else{
-            //彩色
-            [self.colorLogArray removeObject:log];
-        }
+        //normal
+        [self.normalLogArray removeObject:log];
+    }
+    else if (log.logType == CocoaDebugLogTypeNormal)
+    {
+        //rn
+        [self.rnLogArray removeObject:log];
     }
     else
     {
-        //H5
-        [self.h5LogArray removeObject:log];
+        //web
+        [self.webLogArray removeObject:log];
     }
 }
 
-- (void)resetDefaultLogs
+- (void)resetNormalLogs
 {
-    [self.defaultLogArray removeAllObjects];
+    [self.normalLogArray removeAllObjects];
 }
 
-- (void)resetColorLogs
+- (void)resetRNLogs
 {
-    [self.colorLogArray removeAllObjects];
+    [self.rnLogArray removeAllObjects];
 }
 
-- (void)resetH5Logs
+- (void)resetWebLogs
 {
-    [self.h5LogArray removeAllObjects];
+    [self.webLogArray removeAllObjects];
 }
 
 @end

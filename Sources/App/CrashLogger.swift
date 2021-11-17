@@ -2,8 +2,8 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
@@ -44,46 +44,53 @@ func handleSignal(signal: Int32) {
 }
 
 class CrashLogger {
-
+    
     static let shared = CrashLogger()
     private init() {}
     
+    var hasBeenRegistered = false
     var crashed = false
     var enable: Bool = false {
         didSet {
             if enable {
-                CrashLogger.register()
+                CrashLogger.shared.register()
             }
             else {
-                CrashLogger.unregister()
+                CrashLogger.shared.unregister()
             }
         }
     }
-
-    static func register() {
-        NSSetUncaughtExceptionHandler(exceptionHandler)
-        signal(SIGILL, handleSignal)
-        signal(SIGABRT, handleSignal)
-        signal(SIGFPE, handleSignal)
-        signal(SIGBUS, handleSignal)
-        signal(SIGSEGV, handleSignal)
-        signal(SIGSYS, handleSignal)
-        signal(SIGPIPE, handleSignal)
-        signal(SIGTRAP, handleSignal)
+    
+    func register() {
+        if hasBeenRegistered == false {
+            hasBeenRegistered = true
+            NSSetUncaughtExceptionHandler(exceptionHandler)
+            signal(SIGILL, handleSignal)
+            signal(SIGABRT, handleSignal)
+            signal(SIGFPE, handleSignal)
+            signal(SIGBUS, handleSignal)
+            signal(SIGSEGV, handleSignal)
+            signal(SIGSYS, handleSignal)
+            signal(SIGPIPE, handleSignal)
+            signal(SIGTRAP, handleSignal)
+        }
     }
-
-    static func unregister() {
-        NSSetUncaughtExceptionHandler(nil)
-        signal(SIGILL, SIG_DFL)
-        signal(SIGABRT, SIG_DFL)
-        signal(SIGFPE, SIG_DFL)
-        signal(SIGBUS, SIG_DFL)
-        signal(SIGSEGV, SIG_DFL)
-        signal(SIGSYS, SIG_DFL)
-        signal(SIGPIPE, SIG_DFL)
-        signal(SIGTRAP, SIG_DFL)
+    
+    func unregister() {
+        if hasBeenRegistered == true {
+            hasBeenRegistered = false
+            NSSetUncaughtExceptionHandler(nil)
+            signal(SIGILL, SIG_DFL)
+            signal(SIGABRT, SIG_DFL)
+            signal(SIGFPE, SIG_DFL)
+            signal(SIGBUS, SIG_DFL)
+            signal(SIGSEGV, SIG_DFL)
+            signal(SIGSYS, SIG_DFL)
+            signal(SIGPIPE, SIG_DFL)
+            signal(SIGTRAP, SIG_DFL)
+        }
     }
-
+    
     static func addCrash(name: String, reason: String?) {
         let newCrash = _CrashModel(name: name, reason: reason)
         CrashStoreManager.shared.addCrash(newCrash)

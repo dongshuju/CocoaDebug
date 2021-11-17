@@ -2,8 +2,8 @@
 //  Example
 //  man
 //
-//  Created by man on 11/11/2018.
-//  Copyright © 2018 man. All rights reserved.
+//  Created by man 11/11/2018.
+//  Copyright © 2020 man. All rights reserved.
 //
 
 import UIKit
@@ -18,6 +18,7 @@ class NetworkViewController: UIViewController {
     var cacheModels: Array<_HttpModel>?
     var searchModels: Array<_HttpModel>?
     
+    var naviItemTitleLabel: UILabel?
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -32,7 +33,7 @@ class NetworkViewController: UIViewController {
         
         if searchText == "" {
             models = cacheModels
-        }else{
+        } else {
             guard let searchModels = searchModels else {return}
             
             for _ in searchModels {
@@ -49,39 +50,34 @@ class NetworkViewController: UIViewController {
     //MARK: - private
     func reloadHttp(needScrollToEnd: Bool = false) {
         
-        if reloadDataFinish == false {
-            return
-        }
+        if reloadDataFinish == false {return}
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1)) { [weak self] in
-            if self?.searchBar.isHidden == true {
-                self?.searchBar.isHidden = false
-            }
+        if searchBar.isHidden != false {
+            searchBar.isHidden = false
         }
-        
         
         self.models = (_HttpDatasource.shared().httpModels as NSArray as? [_HttpModel])
         self.cacheModels = self.models
         
         self.searchLogic(CocoaDebugSettings.shared.networkSearchWord ?? "")
-
-        dispatch_main_async_safe { [weak self] in
-            self?.reloadDataFinish = false
-            self?.tableView.reloadData {
-                self?.reloadDataFinish = true
-            }
-            
-            if needScrollToEnd == false {return}
-            
-            //table下滑到底部
-            if let count = self?.models?.count {
-                if count > 0 {
-                    guard let firstIn = self?.firstIn else {return}
-                    self?.tableView.tableViewScrollToBottom(animated: !firstIn)
-                    self?.firstIn = false
-                }
+        
+        //        dispatch_main_async_safe { [weak self] in
+        self.reloadDataFinish = false
+        self.tableView.reloadData {
+            self.reloadDataFinish = true
+        }
+        
+        if needScrollToEnd == false {return}
+        
+        //table下滑到底部
+        if let count = self.models?.count {
+            if count > 0 {
+                //                    guard let firstIn = self.firstIn else {return}
+                self.tableView.tableViewScrollToBottom(animated: !firstIn)
+                self.firstIn = false
             }
         }
+        //        }
     }
     
     //MARK: - init
@@ -92,12 +88,20 @@ class NetworkViewController: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
+        naviItemTitleLabel = UILabel.init(frame: CGRect(x: 0, y: 0, width: 80, height: 40))
+        naviItemTitleLabel?.textAlignment = .center
+        naviItemTitleLabel?.textColor = Color.mainGreen
+        naviItemTitleLabel?.font = .boldSystemFont(ofSize: 20)
+        naviItem.titleView = naviItemTitleLabel
         
-        naviItem.title = "[0]"
+        naviItemTitleLabel?.text = "[0]"
         deleteItem.tintColor = Color.mainGreen
         
         //notification
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadHttp_notification), name: NSNotification.Name(rawValue: "reloadHttp_SSPDebug"), object: nil)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "reloadHttp_CocoaDebug"), object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.reloadHttp(needScrollToEnd: self?.reachEnd ?? true)
+        }
+        
         
         tableView.tableFooterView = UIView()
         tableView.dataSource = self
@@ -160,27 +164,21 @@ class NetworkViewController: UIViewController {
         _HttpDatasource.shared().reset()
         models = []
         cacheModels = []
-        searchBar.text = nil
+        //        searchBar.text = nil
         searchBar.resignFirstResponder()
-        CocoaDebugSettings.shared.networkSearchWord = nil
+        //        CocoaDebugSettings.shared.networkSearchWord = nil
         CocoaDebugSettings.shared.networkLastIndex = 0
-
-        dispatch_main_async_safe { [weak self] in
-            self?.tableView.reloadData()
-            self?.naviItem.title = "[0]"
-        }
+        
+        //        dispatch_main_async_safe { [weak self] in
+        self.tableView.reloadData()
+        self.naviItemTitleLabel?.text = "[0]"
+        //        }
+        
+        NotificationCenter.default.post(name: NSNotification.Name("deleteAllLogs_CocoaDebug"), object: nil, userInfo: nil)
     }
     
     @objc func didTapView() {
         searchBar.resignFirstResponder()
-    }
-    
-    
-    //MARK: - notification
-    @objc func reloadHttp_notification() {
-        dispatch_main_async_safe { [weak self] in
-            self?.reloadHttp(needScrollToEnd: self?.reachEnd ?? true)
-        }
     }
 }
 
@@ -189,7 +187,7 @@ extension NetworkViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let count = models?.count {
-            naviItem.title = "[" + String(count) + "]"
+            naviItemTitleLabel?.text = "[" + String(count) + "]"
             return count
         }
         return 0
@@ -200,6 +198,7 @@ extension NetworkViewController: UITableViewDataSource {
             as! NetworkCell
         
         cell.httpModel = models?[indexPath.row]
+        cell.index = indexPath.row
         return cell
     }
 }
@@ -224,7 +223,7 @@ extension NetworkViewController: UITableViewDelegate {
                         // Fallback on earlier versions
                         height = content_.height(with: UIFont.boldSystemFont(ofSize: 13), constraintToWidth: (UIScreen.main.bounds.size.width - 92))
                     }
-                }else{
+                } else {
                     //计算NSString高度
                     if #available(iOS 8.2, *) {
                         height = content_.height(with: UIFont.systemFont(ofSize: 13, weight: .regular), constraintToWidth: (UIScreen.main.bounds.size.width - 92))
@@ -249,17 +248,9 @@ extension NetworkViewController: UITableViewDelegate {
         
         guard let models = models else {return}
         
-        if let index = models.firstIndex(where: { (model_) -> Bool in
-            return model_.isSelected == true
-        }) {
-            models[index].isSelected = false
-        }
-        
-        let model = models[indexPath.row]
-        model.isSelected = true
-        
         let vc: NetworkDetailViewController = NetworkDetailViewController.instanceFromStoryBoard()
-        vc.httpModel = model
+        vc.httpModels = models
+        vc.httpModel = models[indexPath.row]
         self.navigationController?.pushViewController(vc, animated: true)
         
         vc.justCancelCallback = { [weak self] in
@@ -268,82 +259,21 @@ extension NetworkViewController: UITableViewDelegate {
         
         CocoaDebugSettings.shared.networkLastIndex = indexPath.row
     }
-    
-    @available(iOS 11.0, *)
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        guard let models = models else {return UISwipeActionsConfiguration.init()}
-        let model = models[indexPath.row]
-        var title = "Tag"
-        if model.isTag == true {title = "UnTag"}
-        
-        let left = UIContextualAction(style: .normal, title: title) { [weak self] (action, sourceView, completionHandler) in
-            model.isTag = !model.isTag
-            self?.dispatch_main_async_safe { [weak self] in
-                self?.tableView.reloadData()
-            }
-            completionHandler(true)
-        }
-        
-        searchBar.resignFirstResponder()
-        left.backgroundColor = "#007aff".hexColor
-        return UISwipeActionsConfiguration(actions: [left])
-    }
-    
-    @available(iOS 11.0, *)
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (action, sourceView, completionHandler) in
-            guard let models = self?.models else {return}
-            _HttpDatasource.shared().remove(models[indexPath.row])
-            self?.models?.remove(at: indexPath.row)
-            self?.dispatch_main_async_safe { [weak self] in
-                self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-            }
-            if CocoaDebugSettings.shared.networkLastIndex == indexPath.row {
-                CocoaDebugSettings.shared.networkLastIndex = 0
-            }
-            completionHandler(true)
-        }
-        
-        searchBar.resignFirstResponder()
-        return UISwipeActionsConfiguration(actions: [delete])
-    }
-    
-    //MARK: - only for ios8/ios9/ios10, not ios11
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .delete
-    }
-    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Delete"
-    }
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if (editingStyle == .delete) {
-            guard let models = self.models else {return}
-            _HttpDatasource.shared().remove(models[indexPath.row])
-            self.models?.remove(at: indexPath.row)
-            self.dispatch_main_async_safe { [weak self] in
-                self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-            }
-            if CocoaDebugSettings.shared.networkLastIndex == indexPath.row {
-                CocoaDebugSettings.shared.networkLastIndex = 0
-            }
-        }
-    }
 }
 
 //MARK: - UIScrollViewDelegate
 extension NetworkViewController: UIScrollViewDelegate {
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         searchBar.resignFirstResponder()
+        reachEnd = false
     }
     
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        reachEnd = false
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (scrollView.contentOffset.y + 1) >= (scrollView.contentSize.height - scrollView.frame.size.height) {
+            //bottom reached
+            reachEnd = true
+        }
     }
 }
 
@@ -360,9 +290,9 @@ extension NetworkViewController: UISearchBarDelegate {
         CocoaDebugSettings.shared.networkSearchWord = searchText
         searchLogic(searchText)
         
-        dispatch_main_async_safe { [weak self] in
-            self?.tableView.reloadData()
-        }
+        //        dispatch_main_async_safe { [weak self] in
+        self.tableView.reloadData()
+        //        }
     }
 }
 
